@@ -38,14 +38,6 @@ $('iframe').zoomer({ width: 200, zoom: 0.5 });
         invisible = {
             visibility: 'hidden'
         },
-        unselectable = {
-            '-webkit-user-select': 'none',
-            '-khtml-user-select':  'none',
-            '-moz-user-select':    'none',
-            '-o-user-select':      'none',
-            'user-select': 'none',
-            'overflow': 'hidden'
-        },
         absolute = {
             top: 0,
             position: 'absolute'
@@ -76,10 +68,7 @@ $('iframe').zoomer({ width: 200, zoom: 0.5 });
         zoomer: function() {
             var $el = $(this), options = $el.data(pluginName);
 
-            $el
-                .css(invisible)
-                .css(unselectable)
-            ;
+            
 
             if (options.zoom === 'auto') {
                 if (options.width === 'auto' && options.height === 'auto') {
@@ -130,14 +119,11 @@ $('iframe').zoomer({ width: 200, zoom: 0.5 });
                     .wrap(
                         $('<div/>')
                             .addClass('zoomer-wrapper')
-                            .css(unselectable)
                             .css(relative)
                     )
                     .wrap(
                         $('<div/>')
                             .addClass('zoomer-small')
-                            .css(invisible)
-                            .css(unselectable)
                     )
                 ;
             }
@@ -146,16 +132,7 @@ $('iframe').zoomer({ width: 200, zoom: 0.5 });
 
             options.zoomerSmall = $el.parents('.zoomer-small');
 
-            options.zoomerCover = $('<div/>')
-                .addClass('zoomer-cover')
-                .css(unselectable)
-                .css(absolute)
-                .css({
-                    textAlign: 'center',
-                    fontSize: '15px'
-                })
-            ;
-
+            
             options.zoomerLink = $('<a/>')
                 .attr('target', '_blank')
                 .html(options.message)
@@ -193,27 +170,10 @@ $('iframe').zoomer({ width: 200, zoom: 0.5 });
                 options.zoomerLink.attr('href', options.messageURL || options.src);
             }
 
-            options.zoomerCover
-                .append(options.zoomerLink)
-                .hover(function(){
-                    options.zoomerLink.show();
-                    $(this).css('box-shadow', 'inset 2px 2px ' + (parseInt(options.width, 10) * 2) + 'px rgba(255, 255, 255, 0.2)');
-                }, function(){
-                    options.zoomerLink.hide();
-                    $(this).css('box-shadow', 'none');
-                })
-                .mousedown(function(){
-                    $(this).css('box-shadow', 'inset 2px 2px ' + (parseInt(options.width, 10) * 2) + 'px rgba(200, 200, 200, 0.8)');
-                })
-                .bind('mouseout mouseup', function(){
-                    $(this).css('box-shadow', 'none');
-                })
-            ;
-
+ 
             options.zoomerLoader = $('<div/>')
                 .addClass('zoomer-loader')
                 .css(invisible)
-                .css(unselectable)
                 .css(absolute)
                 .css({
                     textAlign: 'center',
@@ -225,11 +185,9 @@ $('iframe').zoomer({ width: 200, zoom: 0.5 });
             ;
 
             options.zoomerWrapper
-                .append(options.zoomerCover)
                 .append(options.zoomerLoader)
             ;
 
-            if (isMSIE) { options.zoomerLoader.css(invisible); }
 
             return $el[pluginName]('updateWrapper')[pluginName]('fadeOut');
         },
@@ -237,7 +195,7 @@ $('iframe').zoomer({ width: 200, zoom: 0.5 });
         updateWrapper: function() {
             var $el = $(this), options = $el.data(pluginName);
 
-            $.each([options.zoomerWrapper.get(0), options.zoomerCover.get(0), options.zoomerLoader.get(0), options.zoomerSmall.get(0)], function(){
+            $.each([options.zoomerWrapper.get(0), options.zoomerLoader.get(0), options.zoomerSmall.get(0)], function(){
                 $(this).css({
                     height: options.height,
                     width: options.width
@@ -252,7 +210,6 @@ $('iframe').zoomer({ width: 200, zoom: 0.5 });
 
             if (isMSIE) { return $el; }
 
-            $el.css(invisible);
 
             options.zoomerSmall
                 .stop()
@@ -301,7 +258,6 @@ $('iframe').zoomer({ width: 200, zoom: 0.5 });
 
         zoom: function() {
             var $el = $(this), options = $el.data(pluginName);
-
             if (isMSIE) {
                 setTimeout(function(){
                     $el
@@ -315,28 +271,13 @@ $('iframe').zoomer({ width: 200, zoom: 0.5 });
 
                     options.zoomerLink.remove();
 
-                    options.zoomerCover
-                        .unbind('hover mouseover mouseout')
-                        .addClass(options.ieMessageButtonClass)
-                        .html(options.message)
-                        .css({
-                            width: 94,
-                            height: 14,
-                            fontSize: 12,
-                            padding: '6px 18px 6px 18px',
-                            top: parseInt(options.height - (12 + (2 * 6) + 2 + 10), 10),
-                            left: parseInt((options.width - (94 + (2 * 18))) / 2, 10)
-                        })
-                        .show()
-                    ;
-
+ 
                     if (!options.click) {
                         options.click = function() {
                             location.href = options.messageURL || options.src;
                         };
                     }
 
-                    options.zoomerCover.unbind('click').bind('click', options.click);
 
                     options.onComplete($el);
                 }, 1000);
@@ -367,7 +308,7 @@ $('iframe').zoomer({ width: 200, zoom: 0.5 });
 
                 return $el;
             }
-
+						
             $el
                 .css({
                     height: options.height / options.zoom,
@@ -390,7 +331,6 @@ $('iframe').zoomer({ width: 200, zoom: 0.5 });
                     options.onComplete($el);
                 })
             ;
-
             return $el;
         },
 
@@ -400,9 +340,8 @@ $('iframe').zoomer({ width: 200, zoom: 0.5 });
             ;
 
             options.src = src;
-
             $el[pluginName]('fadeOut').attr('src', src);
-
+						$el[pluginName]('zoom');
             return $el;
         },
 
